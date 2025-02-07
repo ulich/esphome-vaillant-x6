@@ -68,30 +68,30 @@ To safely connect an ESP device to the boiler's X6 interface, a **galvanic isola
 ### Wiring Example  
 
 ```
-                               +-----------+        +--------+
-                               |Optocoupler|        |Inverter|
-                               |           |        |        |
-                    +----------|VCC     IN |--------|OUT   IN|-----+
-                    |      +---|OUT        |        |        |     |
-+-----------+       |  +---+---|GND    GND |---+    |     GND|-----+--------+
-|      3,3V |-------+  |   |   |           |   |    |     VCC|-----+----+   |      +---------+
-|           |       |  |   |   +-----------+   |    +--------+     |    |   |      --- 24V   |
-|        RX |--------------+                   +-------------------|----|---+----- --- GND   +--+
-|        TX |--------------+                                       +----|---|----- --- TX       |
-|           |       |  |   |                                       +----|---|----- --- RX       |
-|       GND |-------|--+   |    +--------+        +-----------+    |    +---|----- --- 5V    +--+
-+-----------+       |  |   |    |Inverter|        |Optocoupler|    |    |   |      ---       |
-     ESP            |  |   |    |        |        |           |    |    |   |      +---------+
-                    |  |   +----|IN   OUT|--------|IN     VCC |----|----+   |           X6
-                    |  |        |        |        |           |    |        |      When looking onto
-                    |  +--------|GND     |    +---|GND    OUT |----+        |     the port from above
-                    +--|--------|VCC     |    |   |       GND |-------------+
-                       |        +--------+    |   +-----------+
-                       |                      |
-                       +----------------------+
+                         +-----------+        +--------+
+                         |Optocoupler|        |Inverter|
+                         |           |        |        |
+              +----------|VCC     IN |--------|OUT   IN|-----+
+              |      +---|OUT        |        |        |     |
++-------+     |  +---+---|GND    GND |---+    |     GND|-----+--------+
+|  3,3V |-----+  |   |   |           |   |    |     VCC|-----+----+   |     +---------+
+|       |     |  |   |   +-----------+   |    +--------+     |    |   |     --- 24V   |
+|    RX |------------+                   +-------------------|----|---+---- --- GND   +--+
+|    TX |------------+                                       +----|---|---- --- TX       |
+|       |     |  |   |                                       +----|---|---- --- RX       |
+|   GND |-----|--+   |    +--------+        +-----------+    |    +---|---- --- 5V    +--+
++-------+     |  |   |    |Inverter|        |Optocoupler|    |    |   |     ---       |
+   ESP        |  |   |    |        |        |           |    |    |   |     +---------+
+              |  |   +----|IN   OUT|--------|IN     VCC |----|----+   |          X6
+              |  |        |        |        |           |    |        |     When looking onto
+              |  +--------|GND     |    +---|GND    OUT |----+        |    the port from above
+              +--|--------|VCC     |    |   |       GND |-------------+
+                 |        +--------+    |   +-----------+
+                 |                      |
+                 +----------------------+
 ```
 
-For example, 2x 6N139 as optocoupler and 2x 2N7000 as inverter can be used. Note that resistors were not included in this schematic.
+Simple optocouplers usually invert the signal, therefore an inverter is necessary. Note that resistors are not included in the schematic above for simplicity.
 
 
 ## Acknowledgments

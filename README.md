@@ -8,6 +8,19 @@ ESPHome component for Vaillant heating boilers with the X6 interface.
 This ESPHome component allows you to read various operational parameters from Vaillant heating boilers equipped with the **X6 interface**. The component communicates with the boiler via UART and can be integrated into Home Assistant.  
 
 
+## Features  
+
+Continuously reads the following sensor values from the boiler and sends them to Home Assistant:
+
+| Sensor                               | Interval |
+|--------------------------------------|----------|
+| **Actual Flow Temperature**          | 10s      |
+| **Target Flow Temperature**          | 60s      |
+| **Return Flow Temperature**          | 10s      |
+| **Burner Status (On/Off)**           | 10s      |
+| **Circulating Pump Status (On/Off)** | 10s      |
+
+
 ## Installation  
 
 Add the `vaillant_x6` and a `uart` component to your ESPHome configuration.
@@ -79,19 +92,6 @@ To safely connect an ESP device to the boiler's X6 interface, a **galvanic isola
 ```
 
 For example, 2x 6N139 as optocoupler and 2x 2N7000 as inverter can be used. Note that resistors were not included in this schematic.
-
-
-## Features  
-
-Continuously reads the following sensor values from the boiler
-
-| Sensor                               | Interval |
-|--------------------------------------|----------|
-| **Actual Flow Temperature**:         | 10s      |
-| **Target Flow Temperature**:         | 60s      |
-| **Return Flow Temperature**          | 10s      |
-| **Burner Status (On/Off)**           | 10s      |
-| **Circulating Pump Status (On/Off)** | 10s      |
 
 
 ## Acknowledgments

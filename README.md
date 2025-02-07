@@ -20,7 +20,7 @@ esphome:
 
 external_components:
   - source: github://ulich/esphome-vaillant-x6
-    components: [ vaillant-x6 ]
+    components: [ vaillant_x6 ]
 
 uart:
   id: my_uart

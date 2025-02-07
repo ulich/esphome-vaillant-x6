@@ -1,133 +1,9 @@
 #include "vaillant_x6.h"
-#include "response_decoder.h"
 #include "esphome/core/application.h"
-#include "esphome/components/sensor/sensor.h"
-#include "esphome/components/binary_sensor/binary_sensor.h"
+#include "response_decoder.h"
 
 namespace esphome {
 namespace vaillant_x6 {
-
-class GetCirculatingPumpStatusCommand : public VaillantX6Command {
-  public:
-    GetCirculatingPumpStatusCommand() : VaillantX6Command(4) {
-        name = "Get Circulating Pump State";
-        request_bytes = {0x07, 0x00, 0x00, 0x00, 0x44, 0x01, 0x69};
-
-        sensor.set_object_id("vaillant_x6_circulating_pump");
-        sensor.set_name("Vaillant X6 Circulating Pump");
-        sensor.set_icon("mdi:pump");
-        App.register_binary_sensor(&sensor);
-    }
-
-    virtual void process_response(uint8_t* response) override {
-        bool isOn = response[2] == 0x01;
-        sensor.publish_state(isOn);
-    }
-
-  private:
-    binary_sensor::BinarySensor sensor;
-};
-
-class GetBurnerStatusCommand : public VaillantX6Command {
-  public:
-    GetBurnerStatusCommand() : VaillantX6Command(4) {
-        name = "Get Burner State";
-        request_bytes = {0x07, 0x00, 0x00, 0x00, 0x05, 0x01, 0xEB};
-
-        sensor.set_object_id("vaillant_x6_burner");
-        sensor.set_name("Vaillant X6 Burner");
-        sensor.set_icon("mdi:fire");
-        App.register_binary_sensor(&sensor);
-    }
-
-    virtual void process_response(uint8_t* response) override {
-        bool isOn = response[2] == 0x0f;
-        sensor.publish_state(isOn);
-    }
-
-  private:
-    binary_sensor::BinarySensor sensor;
-};
-
-class GetFlowTargetTemperatureCommand : public VaillantX6Command {
-  public:
-    GetFlowTargetTemperatureCommand() : VaillantX6Command(5) {
-        name = "Get Flow Target Temperature";
-        request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
-
-        sensor.set_object_id("vaillant_x6_flow_target_temperature");
-        sensor.set_name("Vaillant X6 Flow Target Temperature");
-        sensor.set_icon("mdi:thermometer-alert");
-        sensor.set_accuracy_decimals(0);
-        sensor.set_state_class(sensor::STATE_CLASS_MEASUREMENT);
-        sensor.set_device_class("temperature");
-        sensor.set_unit_of_measurement("°C");
-        App.register_sensor(&sensor);
-    }
-
-    virtual void process_response(uint8_t* response) override {
-        float temperature = ResponseDecoder::temperature(response + 2);
-        sensor.publish_state(temperature);
-    }
-
-    virtual int get_interval() override {
-        return 6; // every 60s since polling component is set to 10s
-    }
-
-  private:
-    sensor::Sensor sensor;
-};
-
-class GetFlowTemperatureCommand : public VaillantX6Command {
-  public:
-    GetFlowTemperatureCommand() : VaillantX6Command(6) {
-        name = "Get Flow Temperature";
-        request_bytes = {0x07, 0x00, 0x00, 0x00, 0x18, 0x03, 0xd3};
-
-        sensor.set_object_id("vaillant_x6_flow_temperature");
-        sensor.set_name("Vaillant X6 Flow Temperature");
-        sensor.set_icon("mdi:thermometer");
-        sensor.set_accuracy_decimals(0);
-        sensor.set_state_class(sensor::STATE_CLASS_MEASUREMENT);
-        sensor.set_device_class("temperature");
-        sensor.set_unit_of_measurement("°C");
-        App.register_sensor(&sensor);
-    }
-
-    virtual void process_response(uint8_t* response) override {
-        float temperature = ResponseDecoder::temperature(response + 2);
-        sensor.publish_state(temperature);
-    }
-
-  private:
-    sensor::Sensor sensor;
-};
-
-class GetReturnFlowTemperatureCommand : public VaillantX6Command {
-  public:
-    GetReturnFlowTemperatureCommand() : VaillantX6Command(8) {
-        name = "Get Return Flow Temperature";
-        request_bytes = {0x07, 0x00, 0x00, 0x00, 0x98, 0x05, 0xcc};
-
-        sensor.set_object_id("vaillant_x6_return_flow_temperature");
-        sensor.set_name("Vaillant X6 Return Flow Temperature");
-        sensor.set_icon("mdi:thermometer");
-        sensor.set_accuracy_decimals(0);
-        sensor.set_state_class(sensor::STATE_CLASS_MEASUREMENT);
-        sensor.set_device_class("temperature");
-        sensor.set_unit_of_measurement("°C");
-        App.register_sensor(&sensor);
-    }
-
-    virtual void process_response(uint8_t* response) override {
-        float temperature = ResponseDecoder::temperature(response + 2);
-        sensor.publish_state(temperature);
-    }
-
-  private:
-    sensor::Sensor sensor;
-};
-
 
 void VaillantX6Component::setup() {
     request_response_handler = new RequestResponseHandler(
@@ -138,11 +14,51 @@ void VaillantX6Component::setup() {
         std::bind(&VaillantX6Component::is_response_valid, this)
     );
 
-    commands.push_back(new GetCirculatingPumpStatusCommand());
-    commands.push_back(new GetBurnerStatusCommand());
-    commands.push_back(new GetFlowTargetTemperatureCommand());
-    commands.push_back(new GetFlowTemperatureCommand());
-    commands.push_back(new GetReturnFlowTemperatureCommand());
+    {
+        auto cmd = new GetOnOffStatusCommand(4);
+        cmd->name = "Get Circulating Pump State";
+        cmd->sensor_name = "Vaillant X6 Circulating Pump";
+        cmd->object_id = "vaillant_x6_circulating_pump";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x44, 0x01, 0x69};
+        cmd->icon = "mdi:pump";
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetOnOffStatusCommand(4);
+        cmd->name = "Get Burner State";
+        cmd->sensor_name = "Vaillant X6 Burner";
+        cmd->object_id = "vaillant_x6_burner";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x05, 0x01, 0xEB};
+        cmd->icon = "mdi:fire";
+        cmd->on_value = 0x0f;
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetTemperatureCommand(5);
+        cmd->name = "Get Flow Target Temperature";
+        cmd->sensor_name = "Vaillant X6 Flow Target Temperature";
+        cmd->object_id = "vaillant_x6_flow_target_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
+        cmd->icon = "mdi:thermometer-alert";
+        cmd->interval = 6; // 10s polling => 60s
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetTemperatureCommand(6);
+        cmd->name = "Get Flow Temperature";
+        cmd->sensor_name = "Vaillant X6 Flow Temperature";
+        cmd->object_id = "vaillant_x6_flow_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x18, 0x03, 0xd3};
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetTemperatureCommand(8);
+        cmd->name = "Get Return Flow Temperature";
+        cmd->sensor_name = "Vaillant X6 Return Flow Temperature";
+        cmd->object_id = "vaillant_x6_return_flow_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x98, 0x05, 0xcc};
+        add_command(cmd);
+    }
 }
 
 void VaillantX6Component::update() {
@@ -218,6 +134,39 @@ uint8_t VaillantX6Component::calc_checksum_of_response() {
     }
     
     return checksum;
+}
+
+// -------------------------------------------- 
+
+// The following methods should be in command.cpp but not sure how to make esphome aware of it
+void GetTemperatureCommand::init_sensor() {
+    sensor.set_object_id(object_id.c_str());
+    sensor.set_name(sensor_name.c_str());
+    sensor.set_icon(icon.c_str());
+    sensor.set_state_class(sensor::STATE_CLASS_MEASUREMENT);
+    sensor.set_device_class("temperature");
+    sensor.set_unit_of_measurement("°C");
+    sensor.set_accuracy_decimals(0);
+    App.register_sensor(&sensor);
+}
+
+void GetTemperatureCommand::process_response(uint8_t* response) {
+    float temperature = ResponseDecoder::temperature(response + 2);
+    sensor.publish_state(temperature);
+}
+
+// -------------------------------------------- 
+
+void GetOnOffStatusCommand::init_sensor() {
+    sensor.set_object_id(object_id.c_str());
+    sensor.set_name(sensor_name.c_str());
+    sensor.set_icon(icon.c_str());
+    App.register_binary_sensor(&sensor);
+}
+
+void GetOnOffStatusCommand::process_response(uint8_t* response) {
+    bool is_on = response[2] == on_value;
+    sensor.publish_state(is_on);
 }
 
 } // namespace vaillant_x6

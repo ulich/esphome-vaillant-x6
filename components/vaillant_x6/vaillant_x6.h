@@ -3,29 +3,10 @@
 #include "esphome/core/component.h"
 #include "esphome/components/uart/uart.h"
 #include "request_response_handler.h"
+#include "command.h"
 
 namespace esphome {
 namespace vaillant_x6 {
-
-class VaillantX6Command : public Command {
-  public:
-    VaillantX6Command(int required_response_length)
-    : required_response_length(required_response_length) {}
-
-    virtual ~VaillantX6Command() = default;
-    virtual void process_response(uint8_t* response) = 0;
-    
-    virtual int get_required_response_length() {
-        return required_response_length;
-    }
-
-    virtual int get_interval() {
-      return 1;
-    }
-  
-  private:
-    int required_response_length = 0;
-};
 
 class VaillantX6Component : public PollingComponent, public uart::UARTDevice {
   public:
@@ -42,6 +23,11 @@ class VaillantX6Component : public PollingComponent, public uart::UARTDevice {
     bool is_response_valid();
     uint8_t calc_checksum_of_response();
     void seek_to_next_command();
+    
+    void add_command(VaillantX6Command* cmd) {
+      cmd->init_sensor();
+      commands.push_back(cmd);
+    }
 
     RequestResponseHandler *request_response_handler;
     std::vector<VaillantX6Command*> commands;

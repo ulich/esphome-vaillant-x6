@@ -57,7 +57,9 @@ Only the `uart_id` must be configured. There are no more configuration propertie
 
 The **X6 interface** is a service port found on some older Vaillant boilers (for example on Vaillant ecoTEC classic VC 196/2 - C). It provides a simple 5V-UART communication interface for retrieving operational data.
 
-![Vaillant Board](./doc/vaillant-board.jpg)  
+<p align="center">
+  <img src="./doc/vaillant-board.jpg" alt="Vaillant board"/>
+</p>
 
 
 ### Connection  

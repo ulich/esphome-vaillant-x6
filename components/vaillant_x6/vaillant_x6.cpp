@@ -34,16 +34,6 @@ void VaillantX6Component::setup() {
         add_command(cmd);
     }
     {
-        auto cmd = new GetTemperatureCommand(5);
-        cmd->name = "Get Flow Target Temperature";
-        cmd->sensor_name = "Vaillant X6 Flow Target Temperature";
-        cmd->object_id = "vaillant_x6_flow_target_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
-        cmd->icon = "mdi:thermometer-alert";
-        cmd->interval = 6; // 10s polling => 60s
-        add_command(cmd);
-    }
-    {
         auto cmd = new GetTemperatureCommand(6);
         cmd->name = "Get Flow Temperature";
         cmd->sensor_name = "Vaillant X6 Flow Temperature";
@@ -57,6 +47,36 @@ void VaillantX6Component::setup() {
         cmd->sensor_name = "Vaillant X6 Return Flow Temperature";
         cmd->object_id = "vaillant_x6_return_flow_temperature";
         cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x98, 0x05, 0xcc};
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetTemperatureCommand(5);
+        cmd->name = "Get Flow Target Temperature";
+        cmd->sensor_name = "Vaillant X6 Flow Target Temperature";
+        cmd->object_id = "vaillant_x6_flow_target_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
+        cmd->icon = "mdi:thermometer-alert";
+        cmd->interval = 6; // 10s polling => 60s
+        add_command(cmd);
+    }
+    {
+        auto cmd = new GetTemperatureCommand(5);
+        cmd->name = "Get Room Thermostat Flow Target Temperature";
+        cmd->sensor_name = "Vaillant X6 Room Thermostat Flow Target Temperature";
+        cmd->object_id = "vaillant_x6_room_thermostat_flow_target_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x25, 0x02, 0xa8};
+        cmd->icon = "mdi:thermometer-alert";
+        cmd->interval = 6; // 10s polling => 60s
+        add_command(cmd);
+    }
+        {
+        auto cmd = new GetTemperatureCommand(6);
+        cmd->name = "Get Outside Temperature";
+        cmd->sensor_name = "Vaillant X6 Outside Temperature";
+        cmd->object_id = "vaillant_x6_outside_temperature";
+        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x6a, 0x03, 0x37};
+        cmd->icon = "mdi:home-thermometer";
+        cmd->interval = 6; // 10s polling => 60s
         add_command(cmd);
     }
 }

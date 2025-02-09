@@ -12,13 +12,15 @@ This ESPHome component allows you to read various operational parameters from Va
 
 Continuously reads the following sensor values from the boiler and sends them to Home Assistant:
 
-| Sensor                               | Interval |
-|--------------------------------------|----------|
-| **Actual Flow Temperature**          | 10s      |
-| **Target Flow Temperature**          | 60s      |
-| **Return Flow Temperature**          | 10s      |
-| **Burner Status (On/Off)**           | 10s      |
-| **Circulating Pump Status (On/Off)** | 10s      |
+| Sensor                                               | Interval |
+|------------------------------------------------------|----------|
+| **Actual Flow Temperature**                          | 10s      |
+| **Target Flow Temperature**                          | 60s      |
+| **Target Flow Temperature based on room thermostat** | 60s      |
+| **Return Flow Temperature**                          | 10s      |
+| **Outside Temperature**                              | 60s      |
+| **Burner Status (On/Off)**                           | 10s      |
+| **Circulating Pump Status (On/Off)**                 | 10s      |
 
 
 ## Installation  

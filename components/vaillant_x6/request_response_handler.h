@@ -39,14 +39,14 @@ class RequestResponseHandler {
     bool loop() {
         if (is_waiting_for_response) {
             if (millis() - last_request_time_ > VAILLANT_X6_RESPONSE_TIMEOUT) {
-                ESP_LOGD(TAG, "Response timeout");
+                ESP_LOGW(TAG, "Response timeout");
                 is_waiting_for_response = false;
                 return false;
             }
 
             while (available()) {
                 if (bytes_read_count > VAILLANT_X6_SERIAL_BUFFER_LEN) {
-                    ESP_LOGD(TAG, "Read buffer full");
+                    ESP_LOGW(TAG, "Read buffer full");
                     is_waiting_for_response = false;
                     return false;
                 }
@@ -61,7 +61,7 @@ class RequestResponseHandler {
                 }
 
                 if (!is_response_valid()) {
-                    ESP_LOGD(TAG, "Invalid response received");
+                    ESP_LOGW(TAG, "Invalid response received");
                     is_waiting_for_response = false;
                     return false;
                 }

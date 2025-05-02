@@ -68,34 +68,25 @@ The **X6 interface** is a service port found on some older Vaillant boilers (for
 
 To safely connect an ESP device to the boiler's X6 interface, a **galvanic isolation** is recommended to avoid electrical damage to both the ESP but more importantly to the circuit board of the boiler. This can be achieved using optocouplers. Also note, that the ESP uses 3,3V and the X6 interface operates on 5V. **Connecting the ESP directly to the X6 interface will damage your ESP immediately!**
 
+<p align="center">
+  <img src="./doc/schematic.png" alt="Schematic"/>
+</p>
 
-### Wiring Example  
+Simple optocouplers like the 6N139 invert the signal, therefore an inverter is necessary. In this schematic this is achieved with an IRLML5103 PNP Mosfet.
+
+### X6 Port
 
 ```
-                         +-----------+        +--------+
-                         |Optocoupler|        |Inverter|
-                         |           |        |        |
-              +----------|VCC     IN |--------|OUT   IN|-----+
-              |      +---|OUT        |        |        |     |
-+-------+     |  +---+---|GND    GND |---+    |     GND|-----+--------+
-|  3,3V |-----+  |   |   |           |   |    |     VCC|-----+----+   |     +---------+
-|       |     |  |   |   +-----------+   |    +--------+     |    |   |     --- 24V   |
-|    RX |------------+                   +-------------------|----|---+---- --- GND   +--+
-|    TX |------------+                                       +----|---|---- --- TX       |
-|       |     |  |   |                                       +----|---|---- --- RX       |
-|   GND |-----|--+   |    +--------+        +-----------+    |    +---|---- --- 5V    +--+
-+-------+     |  |   |    |Inverter|        |Optocoupler|    |    |   |     ---       |
-   ESP        |  |   |    |        |        |           |    |    |   |     +---------+
-              |  |   +----|IN   OUT|--------|IN     VCC |----|----+   |          X6
-              |  |        |        |        |           |    |        |     When looking onto
-              |  +--------|GND     |    +---|GND    OUT |----+        |    the port from above
-              +--|--------|VCC     |    |   |       GND |-------------+
-                 |        +--------+    |   +-----------+
-                 |                      |
-                 +----------------------+
++------------+
+--- 24V      |
+--- GND      +--+
+--- TX          |
+--- RX          |
+--- 5V       +--+
+---          |
++------------+
 ```
-
-Simple optocouplers usually invert the signal, therefore an inverter is necessary. Note that resistors are not included in the schematic above for simplicity.
+(When looking at the X6 port of the Vaillant circuit board from above.)
 
 
 ## Acknowledgments

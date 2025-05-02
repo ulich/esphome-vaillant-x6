@@ -56,7 +56,7 @@ void VaillantX6Component::setup() {
         cmd->object_id = "vaillant_x6_flow_target_temperature";
         cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
         cmd->icon = "mdi:thermometer-alert";
-        cmd->interval = 6; // 10s polling => 60s
+        cmd->interval = 1; // 10s polling => 60s
         add_command(cmd);
     }
     {
@@ -66,10 +66,10 @@ void VaillantX6Component::setup() {
         cmd->object_id = "vaillant_x6_room_thermostat_flow_target_temperature";
         cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x25, 0x02, 0xa8};
         cmd->icon = "mdi:thermometer-alert";
-        cmd->interval = 6; // 10s polling => 60s
+        cmd->interval = 1; // 10s polling => 60s
         add_command(cmd);
     }
-        {
+    {
         auto cmd = new GetTemperatureCommand(6);
         cmd->name = "Get Outside Temperature";
         cmd->sensor_name = "Vaillant X6 Outside Temperature";

@@ -77,7 +77,7 @@ void VaillantX6Component::loop() {
         auto command = commands[current_command_idx];
 
         if (request_response_handler->bytes_read_count != command->get_expected_response_length()) {
-            ESP_LOGD(TAG, "Unexpected response length. Was %d, required %d",
+            ESP_LOGW(TAG, "Unexpected response length. Was %d, required %d",
                     request_response_handler->bytes_read_count, command->get_expected_response_length());
             return;
         }
@@ -108,13 +108,13 @@ bool VaillantX6Component::is_response_complete_() {
 
 bool VaillantX6Component::is_response_valid() {
     if (request_response_handler->response_buffer[1] != 0x00) {
-        ESP_LOGD(TAG, "Second byte in response is not 0x00");
+        ESP_LOGW(TAG, "Second byte in response is not 0x00");
         return false;
     }
 
     uint8_t checksum = request_response_handler->response_buffer[request_response_handler->bytes_read_count - 1];
     if (calc_checksum_of_response() != checksum) {
-        ESP_LOGD(TAG, "Checksum mismatch");
+        ESP_LOGW(TAG, "Checksum mismatch");
         return false;
     }
 

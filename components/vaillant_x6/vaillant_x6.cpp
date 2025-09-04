@@ -13,72 +13,55 @@ void VaillantX6Component::setup() {
         std::bind(&VaillantX6Component::is_response_complete_, this),
         std::bind(&VaillantX6Component::is_response_valid, this)
     );
+}
 
-    {
-        auto cmd = new GetOnOffStatusCommand(4);
-        cmd->name = "Get Circulating Pump State";
-        cmd->sensor_name = "Vaillant X6 Circulating Pump";
-        cmd->object_id = "vaillant_x6_circulating_pump";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x44, 0x01, 0x69};
-        cmd->icon = "mdi:pump";
-        add_command(cmd);
-    }
-    {
-        auto cmd = new GetOnOffStatusCommand(4);
-        cmd->name = "Get Burner State";
-        cmd->sensor_name = "Vaillant X6 Burner";
-        cmd->object_id = "vaillant_x6_burner";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x05, 0x01, 0xEB};
-        cmd->icon = "mdi:fire";
+void VaillantX6Component::add_binary_sensor(
+    binary_sensor::BinarySensor* sensor,
+    std::string response_type,
+    std::vector<uint8_t> request_bytes,
+    int poll_interval) {
+
+    GetOnOffStatusCommand* cmd;
+    if (response_type == "Status01") {
+        cmd = new GetOnOffStatusCommand();
+    } else if (response_type == "Status0f") {
+        cmd = new GetOnOffStatusCommand();
         cmd->on_value = 0x0f;
-        add_command(cmd);
+    } else {
+        ESP_LOGE(TAG, "Unknown response_type: %s", response_type.c_str());
+        return;
     }
-    {
-        auto cmd = new GetTemperatureCommand(6);
-        cmd->name = "Get Flow Temperature";
-        cmd->sensor_name = "Vaillant X6 Flow Temperature";
-        cmd->object_id = "vaillant_x6_flow_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x18, 0x03, 0xd3};
-        add_command(cmd);
+    
+    cmd->name = "Get " + sensor->get_name();
+    cmd->request_bytes = std::move(request_bytes);
+    cmd->sensor = sensor;
+    
+    // PollingComponent is configured to be invoked every 10s (see __init__.py)
+    cmd->interval = poll_interval / 10;
+    commands.push_back(cmd);
+}
+
+void VaillantX6Component::add_sensor(
+    sensor::Sensor* sensor,
+    std::string response_type,
+    std::vector<uint8_t> request_bytes,
+    int poll_interval) {
+
+    GetAnalogueValue2BytesCommand* cmd;
+    if (response_type == "AnalogueValue2Bytes") {
+        cmd = new GetAnalogueValue2BytesCommand();
+    } else {
+        ESP_LOGE(TAG, "Unknown response_type: %s", response_type.c_str());
+        return;
     }
-    {
-        auto cmd = new GetTemperatureCommand(8);
-        cmd->name = "Get Return Flow Temperature";
-        cmd->sensor_name = "Vaillant X6 Return Flow Temperature";
-        cmd->object_id = "vaillant_x6_return_flow_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x98, 0x05, 0xcc};
-        add_command(cmd);
-    }
-    {
-        auto cmd = new GetTemperatureCommand(5);
-        cmd->name = "Get Flow Target Temperature";
-        cmd->sensor_name = "Vaillant X6 Flow Target Temperature";
-        cmd->object_id = "vaillant_x6_flow_target_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x39, 0x02, 0x90};
-        cmd->icon = "mdi:thermometer-alert";
-        cmd->interval = 1; // 10s polling => 60s
-        add_command(cmd);
-    }
-    {
-        auto cmd = new GetTemperatureCommand(5);
-        cmd->name = "Get Room Thermostat Flow Target Temperature";
-        cmd->sensor_name = "Vaillant X6 Room Thermostat Flow Target Temperature";
-        cmd->object_id = "vaillant_x6_room_thermostat_flow_target_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x25, 0x02, 0xa8};
-        cmd->icon = "mdi:thermometer-alert";
-        cmd->interval = 1; // 10s polling => 60s
-        add_command(cmd);
-    }
-    {
-        auto cmd = new GetTemperatureCommand(6);
-        cmd->name = "Get Outside Temperature";
-        cmd->sensor_name = "Vaillant X6 Outside Temperature";
-        cmd->object_id = "vaillant_x6_outside_temperature";
-        cmd->request_bytes = {0x07, 0x00, 0x00, 0x00, 0x6a, 0x03, 0x37};
-        cmd->icon = "mdi:home-thermometer";
-        cmd->interval = 6; // 10s polling => 60s
-        add_command(cmd);
-    }
+    
+    cmd->name = "Get " + sensor->get_name();
+    cmd->request_bytes = std::move(request_bytes);
+    cmd->sensor = sensor;
+    
+    // PollingComponent is configured to be invoked every 10s (see __init__.py)
+    cmd->interval = poll_interval / 10;
+    commands.push_back(cmd);
 }
 
 void VaillantX6Component::update() {
@@ -93,9 +76,9 @@ void VaillantX6Component::loop() {
     if (response_available) {
         auto command = commands[current_command_idx];
 
-        if (request_response_handler->bytes_read_count != command->get_required_response_length()) {
+        if (request_response_handler->bytes_read_count != command->get_expected_response_length()) {
             ESP_LOGD(TAG, "Unexpected response length. Was %d, required %d",
-                    request_response_handler->bytes_read_count, command->get_required_response_length());
+                    request_response_handler->bytes_read_count, command->get_expected_response_length());
             return;
         }
 
@@ -157,36 +140,31 @@ uint8_t VaillantX6Component::calc_checksum_of_response() {
 }
 
 // -------------------------------------------- 
-
 // The following methods should be in command.cpp but not sure how to make esphome aware of it
-void GetTemperatureCommand::init_sensor() {
-    sensor.set_object_id(object_id.c_str());
-    sensor.set_name(sensor_name.c_str());
-    sensor.set_icon(icon.c_str());
-    sensor.set_state_class(sensor::STATE_CLASS_MEASUREMENT);
-    sensor.set_device_class("temperature");
-    sensor.set_unit_of_measurement("°C");
-    sensor.set_accuracy_decimals(0);
-    App.register_sensor(&sensor);
-}
+// -------------------------------------------- 
 
-void GetTemperatureCommand::process_response(uint8_t* response) {
-    float temperature = ResponseDecoder::temperature(response + 2);
-    sensor.publish_state(temperature);
+int VaillantX6Command::get_expected_response_length() {
+    if (request_bytes.size() < 2) {
+        ESP_LOGE(TAG, "Unexpected request_bytes length %d. Must be at least 2", request_bytes.size());
+        return 0;
+    }
+
+    int expected_payload_response_length = request_bytes[request_bytes.size() - 2];
+    return expected_payload_response_length + 3;
 }
 
 // -------------------------------------------- 
 
-void GetOnOffStatusCommand::init_sensor() {
-    sensor.set_object_id(object_id.c_str());
-    sensor.set_name(sensor_name.c_str());
-    sensor.set_icon(icon.c_str());
-    App.register_binary_sensor(&sensor);
+void GetAnalogueValue2BytesCommand::process_response(uint8_t* response) {
+    float value = ResponseDecoder::analogueValue2Bytes(response + 2);
+    sensor->publish_state(value);
 }
+
+// -------------------------------------------- 
 
 void GetOnOffStatusCommand::process_response(uint8_t* response) {
     bool is_on = response[2] == on_value;
-    sensor.publish_state(is_on);
+    sensor->publish_state(is_on);
 }
 
 } // namespace vaillant_x6

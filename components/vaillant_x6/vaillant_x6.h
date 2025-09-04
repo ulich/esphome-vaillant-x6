@@ -18,17 +18,24 @@ class VaillantX6Component : public PollingComponent, public uart::UARTDevice {
     // called on every update_interval configured in __init__.py
     void update() override;
 
+    void add_binary_sensor(
+        binary_sensor::BinarySensor* sensor,
+        std::string response_type,
+        std::vector<uint8_t> request_bytes,
+        int poll_interval);
+
+    void add_sensor(
+        sensor::Sensor* sensor,
+        std::string response_type,
+        std::vector<uint8_t> request_bytes,
+        int poll_interval);
+
   protected:
     bool is_response_complete_();
     bool is_response_valid();
     uint8_t calc_checksum_of_response();
     void seek_to_next_command();
     
-    void add_command(VaillantX6Command* cmd) {
-      cmd->init_sensor();
-      commands.push_back(cmd);
-    }
-
     RequestResponseHandler *request_response_handler;
     std::vector<VaillantX6Command*> commands;
     int current_command_idx{-1};

@@ -10,17 +10,8 @@ This ESPHome component allows you to read various operational parameters from Va
 
 ## Features  
 
-Continuously reads the following sensor values from the boiler and sends them to Home Assistant:
-
-| Sensor                                               | Interval |
-|------------------------------------------------------|----------|
-| **Actual Flow Temperature**                          | 10s      |
-| **Target Flow Temperature**                          | 60s      |
-| **Target Flow Temperature based on room thermostat** | 60s      |
-| **Return Flow Temperature**                          | 10s      |
-| **Outside Temperature**                              | 60s      |
-| **Burner Status (On/Off)**                           | 10s      |
-| **Circulating Pump Status (On/Off)**                 | 10s      |
+Continuously reads the sensor values from the boiler and sends them to Home Assistant.
+Supported sensors can be found further below.
 
 
 ## Installation  
@@ -45,14 +36,65 @@ uart:
 
 vaillant_x6:
   uart_id: my_uart
+
+
+  # built-in sensors:
+  # Remove any sensors you do not need
+
+  flow_temperature_sensor:
+    id: vaillant_x6_flow_temperature
+    name: Vaillant X6 Flow Temperature
+    poll_interval: 10            # 10s, the default
+    icon: mdi:thermometer        # the default
+    accuracy_decimals: 0         # the default
+    unit_of_measurement: °C      # the default
+
+  flow_target_temperature_sensor:
+    id: vaillant_x6_flow_target_temperature
+    name: Vaillant X6 Flow Target Temperature
+    poll_interval: 60            # 60s, the default
+    icon: mdi:thermometer-alert  # the default
+    accuracy_decimals: 0         # the default
+    unit_of_measurement: °C      # the default
+
+  room_thermostat_flow_target_temperature:
+    id: vaillant_x6_room_thermostat_flow_target_temperature
+    name: Vaillant X6 Room Thermostat Flow Target Temperature
+    poll_interval: 60            # 60s, the default
+    icon: mdi:thermometer-alert  # the default
+    accuracy_decimals: 0         # the default
+    unit_of_measurement: °C      # the default
+
+  return_flow_temperature_sensor:
+    id: vaillant_x6_return_flow_temperature
+    name: Vaillant X6 Return Flow Temperature
+    poll_interval: 10            # 10s, the default
+    icon: mdi:thermometer        # the default
+    accuracy_decimals: 0         # the default
+    unit_of_measurement: °C      # the default
+
+  outside_temperature:
+    id: vaillant_x6_outside_temperature
+    name: Vaillant X6 Outside Temperature
+    poll_interval: 60            # 60s, the default
+    icon: mdi:home-thermometer   # the default
+    accuracy_decimals: 0         # the default
+    unit_of_measurement: °C      # the default
+
+  circulating_pump_sensor:
+    id: vaillant_x6_circulating_pump
+    name: Vaillant X6 Circulating Pump
+    poll_interval: 10            # 10s, the default
+    icon: mdi:pump               # the default
+
+  burner_sensor:
+    id: vaillant_x6_burner
+    name: Vaillant X6 Burner
+    poll_interval: 10            # 10s, the default
+    icon: mdi:fire               # the default
 ```
 
 You can also choose other GPIO pins for TX and RX on the ESP.
-
-
-## Configuration
-
-Only the `uart_id` must be configured. There are no more configuration properties as of now. 
 
 
 ## Vaillant X6 Interface  

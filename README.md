@@ -11,7 +11,7 @@ This ESPHome component allows you to read various operational parameters from Va
 ## Features  
 
 Continuously reads the sensor values from the boiler and sends them to Home Assistant.
-Supported sensors can be found further below.
+Supported sensors can be found further below. Custom sensors can be added via the yaml configuration.
 
 
 ## Installation  
@@ -92,6 +92,39 @@ vaillant_x6:
     name: Vaillant X6 Burner
     poll_interval: 10            # 10s, the default
     icon: mdi:fire               # the default
+
+
+  # Add custom sensors that are not yet built-in (I'm happy to add them, just create an issue or PR).
+  # Check https://old.ethersex.de/index.php/Vaillant_X6_Schnittstelle for possible commands
+
+  binary_sensors:
+    - id: vaillant_x6_gas_valve
+      name: Vaillant X6 Gas Valve
+      icon: mdi:valve
+      response_type: Status0f  # Response 0x0f is ON
+      command_byte: 0x48
+      response_length: 1
+      poll_interval: 10 # 10s, the default is 60s
+
+    - id: vaillant_x6_winter_mode
+      name: Vaillant X6 Winter Mode
+      icon: mdi:sun-snowflake-variant
+      response_type: Status01  # Response 0x01 is ON
+      command_byte: 0x08
+      response_length: 1
+      poll_interval: 60  # 60s, the default
+
+  sensors:
+    - id: vaillant_x6_tank_temperature
+      name: Vaillant X6 Tank Temperature
+      icon: mdi:thermometer
+      unit_of_measurement: °C
+      accuracy_decimals: 0
+      device_class: temperature
+      response_type: AnalogueValue2Bytes  # can also be used with more than 2 response bytes, only the first 2 response bytes will be interpreted
+      command_byte: 0x17
+      response_length: 3
+      poll_interval: 10  # 10s, the default is 60s
 ```
 
 You can also choose other GPIO pins for TX and RX on the ESP.

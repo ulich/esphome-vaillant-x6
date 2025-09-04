@@ -30,6 +30,29 @@ def temperature_sensor_schema(icon=ICON_THERMOMETER):
     )
 
 
+BINARY_SENSOR_SCHEMA = binary_sensor.binary_sensor_schema().extend({
+    cv.Required('response_type'): cv.one_of(
+        "Status01",
+        "Status0f",
+        lower=False,
+    ),
+    cv.Required('command_byte'): cv.hex_int,
+    cv.Required('response_length'): cv.positive_int,
+    cv.Optional('poll_interval', default=60): multiple_of_10,
+})
+
+SENSOR_SCHEMA = sensor.sensor_schema(
+        state_class=STATE_CLASS_MEASUREMENT,
+).extend({
+    cv.Required('response_type'): cv.one_of(
+        "AnalogueValue2Bytes",
+        lower=False,
+    ),
+    cv.Required('command_byte'): cv.hex_int,
+    cv.Required('response_length'): cv.positive_int,
+    cv.Optional('poll_interval', default=60): multiple_of_10,
+})
+
 CONFIG_SCHEMA = cv.Schema(
     {
         cv.GenerateID(): cv.declare_id(VaillantX6Component),
@@ -41,6 +64,9 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional('flow_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
         cv.Optional('room_thermostat_flow_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
         cv.Optional('outside_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:home-thermometer")),
+
+        cv.Optional('sensors'): cv.ensure_list(SENSOR_SCHEMA),
+        cv.Optional('binary_sensors'): cv.ensure_list(BINARY_SENSOR_SCHEMA)
     }
 ).extend(cv.polling_component_schema('10s')) \
 .extend(uart.UART_DEVICE_SCHEMA)
@@ -95,5 +121,23 @@ async def to_code(config):
     await add_temperature_sensor('flow_target_temperature_sensor', request_bytes(0x39, 2), config, var)
     await add_temperature_sensor('room_thermostat_flow_target_temperature_sensor', request_bytes(0x25, 2), config, var)
     await add_temperature_sensor('outside_temperature_sensor', request_bytes(0x6a, 3), config, var)
+
+    if 'binary_sensors' in config:
+        for sensor_config in config['binary_sensors']:
+            sensr = await binary_sensor.new_binary_sensor(sensor_config)
+            cg.add(var.add_binary_sensor(sensr,
+                sensor_config['response_type'],
+                request_bytes(sensor_config['command_byte'], sensor_config['response_length']),
+                sensor_config['poll_interval'])
+            )
+
+    if 'sensors' in config:
+        for sensor_config in config['sensors']:
+            sensr = await sensor.new_sensor(sensor_config)
+            cg.add(var.add_sensor(sensr,
+                sensor_config['response_type'],
+                request_bytes(sensor_config['command_byte'], sensor_config['response_length']),
+                sensor_config['poll_interval'])
+            )
 
     await uart.register_uart_device(var, config)

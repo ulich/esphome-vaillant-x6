@@ -57,7 +57,7 @@ vaillant_x6:
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
-  room_thermostat_flow_target_temperature:
+  room_thermostat_flow_target_temperature_sensor:
     id: vaillant_x6_room_thermostat_flow_target_temperature
     name: Vaillant Raumthermostat Vorlauftemperatur Soll
     icon: mdi:thermometer-alert      # the default
@@ -73,7 +73,7 @@ vaillant_x6:
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
-  outside_temperature:
+  outside_temperature_sensor:
     id: vaillant_x6_outside_temperature
     name: Vaillant Außentemperatur
     icon: mdi:home-thermometer       # the default

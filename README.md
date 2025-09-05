@@ -83,7 +83,7 @@ vaillant_x6:
 
   tank_temperature_sensor:
     id: vaillant_x6_tank_temperature
-    name: X6 Speichertemperatur
+    name: Speichertemperatur
     icon: mdi:thermometer-water      # the default
     poll_interval: 30                # 30s, the default
     accuracy_decimals: 0             # the default
@@ -91,7 +91,7 @@ vaillant_x6:
 
   tank_target_temperature_sensor:
     id: vaillant_x6_tank_target_temperature
-    name: X6 Speichertemperatur Soll
+    name: Speichertemperatur Soll
     icon: mdi:thermometer-alert      # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default

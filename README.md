@@ -42,98 +42,85 @@ vaillant_x6:
   # Remove any sensors you do not need
 
   flow_temperature_sensor:
-    id: vaillant_x6_flow_temperature
-    name: Vorlauftemperatur
+    name: Flow Temperature
     icon: mdi:thermometer            # the default
     poll_interval: 10                # 10s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   flow_target_temperature_sensor:
-    id: vaillant_x6_flow_target_temperature
-    name: Vorlauftemperatur Soll
+    name: Flow Target Temperature
     icon: mdi:thermometer-alert      # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   room_thermostat_flow_target_temperature_sensor:
-    id: vaillant_x6_room_thermostat_flow_target_temperature
-    name: Raumthermostat Vorlauftemperatur Soll
+    name: Room Thermostat Flow Target Temperature
     icon: mdi:thermometer-alert      # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   return_flow_temperature_sensor:
-    id: vaillant_x6_return_flow_temperature
-    name: Rücklauftemperatur
+    name: Return Flow Temperature
     icon: mdi:thermometer            # the default
     poll_interval: 10                # 10s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   outside_temperature_sensor:
-    id: vaillant_x6_outside_temperature
-    name: Außentemperatur
+    name: Outside Temperature
     icon: mdi:home-thermometer       # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   tank_temperature_sensor:
-    id: vaillant_x6_tank_temperature
-    name: Speichertemperatur
+    name: Tank Temperature
     icon: mdi:thermometer-water      # the default
     poll_interval: 30                # 30s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   tank_target_temperature_sensor:
-    id: vaillant_x6_tank_target_temperature
-    name: Speichertemperatur Soll
+    name: Tank Target Temperature
     icon: mdi:thermometer-alert      # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   hot_water_temperature_sensor:
-    id: vaillant_x6_hot_water_temperature
-    name: Brauchwassertemperatur
+    name: Hot Water Temperature
     icon: mdi:thermometer-water      # the default
     poll_interval: 30                # 30s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
 
   hot_water_target_temperature_sensor:
-    id: vaillant_x6_hot_water_target_temperature
-    name: Brauchwassertemperatur Soll
+    name: Hot Water Target Temperature
     icon: mdi:thermometer-alert      # the default
     poll_interval: 60                # 60s, the default
     accuracy_decimals: 0             # the default
     unit_of_measurement: °C          # the default
     
   circulating_pump_sensor:
-    id: vaillant_x6_circulating_pump
-    name: Zirkulationspumpe
+    name: Circulating Pump
     icon: mdi:pump                   # the default
     poll_interval: 10                # 10s, the default
 
   burner_sensor:
-    id: vaillant_x6_burner
-    name: Brenner
+    name: Burner
     icon: mdi:fire                   # the default
     poll_interval: 10                # 10s, the default
 
   gas_valve_sensor:
-    id: vaillant_x6_gas_valve
-    name: Gasventil
+    name: Gas Valve
     icon: mdi:valve                  # the default
     poll_interval: 10                # 10s, the default
 
   winter_mode_sensor:
-    id: vaillant_x6_winter_mode
-    name: Winter Modus
+    name: Winter Mode
     icon: mdi:sun-snowflake-variant  # the default
     poll_interval: 60                # 60s, the default
 
@@ -142,16 +129,14 @@ vaillant_x6:
   # Check https://old.ethersex.de/index.php/Vaillant_X6_Schnittstelle for possible commands
 
   binary_sensors:
-    - id: vaillant_x6_pump_target_status
-      name: Pump Target Status
+    - name: Pump Target Status
       icon: mdi:pump-off
       response_type: Status01        # Response 0x01 is ON
       command_byte: 0xa1
       response_length: 1
       poll_interval: 10              # 10s, the default is 60s
 
-    - id: vaillant_x6_igniter
-      name: Zünder
+    - name: Igniter
       icon: mdi:lightning-bolt
       response_type: Status0f        # Response 0x0f is ON
       command_byte: 0x49
@@ -159,8 +144,7 @@ vaillant_x6:
       poll_interval: 10              # 10s, the default is 60s
 
   sensors:
-    - id: vaillant_x6_solar_collector_temperature_no
-      name: Solarkollektor Temperatur Nein!
+    - name: Solar Collector Temperature No
       icon: mdi:sun-thermometer
       unit_of_measurement: °C
       accuracy_decimals: 1                # the default is 0

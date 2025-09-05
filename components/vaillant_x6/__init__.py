@@ -59,11 +59,18 @@ CONFIG_SCHEMA = cv.Schema(
 
         cv.Optional('circulating_pump_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:pump")),
         cv.Optional('burner_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:fire")),
+        cv.Optional('gas_valve_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:valve")),
+        cv.Optional('winter_mode_sensor'): with_poll_interval(60, binary_sensor.binary_sensor_schema(icon="mdi:valve")),
+
         cv.Optional('flow_temperature_sensor'): with_poll_interval(10, temperature_sensor_schema()),
         cv.Optional('return_flow_temperature_sensor'): with_poll_interval(10, temperature_sensor_schema()),
         cv.Optional('flow_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
         cv.Optional('room_thermostat_flow_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
         cv.Optional('outside_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:home-thermometer")),
+        cv.Optional('tank_temperature_sensor'): with_poll_interval(30, temperature_sensor_schema(icon="mdi:thermometer-water")),
+        cv.Optional('tank_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
+        cv.Optional('hot_water_temperature_sensor'): with_poll_interval(30, temperature_sensor_schema(icon="mdi:thermometer-water")),
+        cv.Optional('hot_water_target_temperature_sensor'): with_poll_interval(60, temperature_sensor_schema(icon="mdi:thermometer-alert")),
 
         cv.Optional('sensors'): cv.ensure_list(SENSOR_SCHEMA),
         cv.Optional('binary_sensors'): cv.ensure_list(BINARY_SENSOR_SCHEMA)
@@ -115,12 +122,18 @@ async def to_code(config):
 
     await add_binary_sensor('circulating_pump_sensor', 'Status01', request_bytes(0x44, 1), config, var)
     await add_binary_sensor('burner_sensor', 'Status0f', request_bytes(0x05, 1), config, var)
+    await add_binary_sensor('gas_valve_sensor', 'Status0f', request_bytes(0x48, 1), config, var)
+    await add_binary_sensor('winter_mode_sensor', 'Status01', request_bytes(0x08, 1), config, var)
 
     await add_temperature_sensor('flow_temperature_sensor', request_bytes(0x18, 3), config, var)
     await add_temperature_sensor('return_flow_temperature_sensor', request_bytes(0x98, 5), config, var)
     await add_temperature_sensor('flow_target_temperature_sensor', request_bytes(0x39, 2), config, var)
     await add_temperature_sensor('room_thermostat_flow_target_temperature_sensor', request_bytes(0x25, 2), config, var)
     await add_temperature_sensor('outside_temperature_sensor', request_bytes(0x6a, 3), config, var)
+    await add_temperature_sensor('tank_temperature_sensor', request_bytes(0x17, 3), config, var)
+    await add_temperature_sensor('tank_target_temperature_sensor', request_bytes(0x04, 2), config, var)
+    await add_temperature_sensor('hot_water_temperature_sensor', request_bytes(0x16, 3), config, var)
+    await add_temperature_sensor('hot_water_target_temperature_sensor', request_bytes(0x01, 2), config, var)
 
     if 'binary_sensors' in config:
         for sensor_config in config['binary_sensors']:

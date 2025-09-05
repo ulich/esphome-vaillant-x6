@@ -60,7 +60,7 @@ CONFIG_SCHEMA = cv.Schema(
         cv.Optional('circulating_pump_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:pump")),
         cv.Optional('burner_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:fire")),
         cv.Optional('gas_valve_sensor'): with_poll_interval(10, binary_sensor.binary_sensor_schema(icon="mdi:valve")),
-        cv.Optional('winter_mode_sensor'): with_poll_interval(60, binary_sensor.binary_sensor_schema(icon="mdi:valve")),
+        cv.Optional('winter_mode_sensor'): with_poll_interval(60, binary_sensor.binary_sensor_schema(icon="mdi:sun-snowflake-variant")),
 
         cv.Optional('flow_temperature_sensor'): with_poll_interval(10, temperature_sensor_schema()),
         cv.Optional('return_flow_temperature_sensor'): with_poll_interval(10, temperature_sensor_schema()),

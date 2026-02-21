@@ -164,8 +164,8 @@ void GetAnalogueValue2BytesCommand::process_response(uint8_t* response) {
 
 // -------------------------------------------- 
 
-void GetAnalogueValueByteCommand::process_response(uint8_t* response) {
-    float value = ResponseDecoder::analogueValue1Byte(response + 2);
+void GetAnalogueValue1ByteCommand::process_response(uint8_t* response) {
+    float value = ResponseDecoder::analogueValue1Byte(response[2]);
     sensor->publish_state(value);
 }
 

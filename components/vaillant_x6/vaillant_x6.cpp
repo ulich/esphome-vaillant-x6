@@ -47,7 +47,7 @@ void VaillantX6Component::add_sensor(
     std::vector<uint8_t> request_bytes,
     int poll_interval) {
 
-    GetAnalogueValue2BytesCommand* cmd;
+    VaillantX6Command* cmd;
     if (response_type == "AnalogueValue2Bytes") {
         cmd = new GetAnalogueValue2BytesCommand();
     } else if (response_type == "AnalogueValue1Byte") {

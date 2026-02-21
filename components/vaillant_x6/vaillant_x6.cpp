@@ -50,6 +50,8 @@ void VaillantX6Component::add_sensor(
     GetAnalogueValue2BytesCommand* cmd;
     if (response_type == "AnalogueValue2Bytes") {
         cmd = new GetAnalogueValue2BytesCommand();
+    } else if (response_type == "AnalogueValue1Byte") {
+        cmd = new GetAnalogueValue1ByteCommand();
     } else {
         ESP_LOGE(TAG, "Unknown response_type: %s", response_type.c_str());
         return;
@@ -157,6 +159,13 @@ int VaillantX6Command::get_expected_response_length() {
 
 void GetAnalogueValue2BytesCommand::process_response(uint8_t* response) {
     float value = ResponseDecoder::analogueValue2Bytes(response + 2);
+    sensor->publish_state(value);
+}
+
+// -------------------------------------------- 
+
+void GetAnalogueValueByteCommand::process_response(uint8_t* response) {
+    float value = ResponseDecoder::analogueValue1Byte(response + 2);
     sensor->publish_state(value);
 }
 

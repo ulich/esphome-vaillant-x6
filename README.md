@@ -124,6 +124,11 @@ vaillant_x6:
     icon: mdi:sun-snowflake-variant  # the default
     poll_interval: 60                # 60s, the default
 
+  remaining_anti_cycling_time:
+    name: Remaining Anti-Cycling Time
+    icon: mdi:timer-lock             # the default
+    poll_interval: 10                # 10s, the default
+
 
   # Add custom sensors that are not yet built-in (I'm happy to add them, just create an issue or PR).
   # Check https://old.ethersex.de/index.php/Vaillant_X6_Schnittstelle for possible commands
@@ -149,7 +154,7 @@ vaillant_x6:
       unit_of_measurement: °C
       accuracy_decimals: 1                # the default is 0
       device_class: temperature
-      response_type: AnalogueValue2Bytes  # Currently, this is the only allowed value. Can also be used with more than 2 response bytes, only the first 2 response bytes will be interpreted
+      response_type: AnalogueValue2Bytes  # AnalogueValue1Byte or AnalogueValue2Byes. The latter can also be used with more than 2 response bytes, only the first 2 response bytes will be interpreted
       command_byte: 0xb7
       response_length: 3
       poll_interval: 60                   # 60s, the default

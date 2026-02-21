@@ -153,7 +153,7 @@ async def to_code(config):
     await add_temperature_sensor('hot_water_temperature_sensor', request_bytes(0x16, 3), config, var)
     await add_temperature_sensor('hot_water_target_temperature_sensor', request_bytes(0x01, 2), config, var)
 
-    await add_sensor('remaining_anti_cycling_time', 'AnalogueValue1Byte' request_bytes(0x38, 1), config, var)
+    await add_sensor('remaining_anti_cycling_time', 'AnalogueValue1Byte', request_bytes(0x38, 1), config, var)
 
     if 'binary_sensors' in config:
         for sensor_config in config['binary_sensors']:

@@ -47,9 +47,15 @@ void VaillantX6Component::add_sensor(
     std::vector<uint8_t> request_bytes,
     int poll_interval) {
 
-    GetAnalogueValue2BytesCommand* cmd;
+    VaillantX6Command* cmd = nullptr;
     if (response_type == "AnalogueValue2Bytes") {
-        cmd = new GetAnalogueValue2BytesCommand();
+        auto* c = new GetAnalogueValue2BytesCommand();
+        c->sensor = sensor;
+        cmd = c;
+    } else if (response_type == "AnalogueValue1Byte") {
+        auto* c = new GetAnalogueValue1ByteCommand();
+        c->sensor = sensor;
+        cmd = c;
     } else {
         ESP_LOGE(TAG, "Unknown response_type: %s", response_type.c_str());
         return;
@@ -57,7 +63,6 @@ void VaillantX6Component::add_sensor(
     
     cmd->name = "Get " + sensor->get_name();
     cmd->request_bytes = std::move(request_bytes);
-    cmd->sensor = sensor;
     
     // PollingComponent is configured to be invoked every 10s (see __init__.py)
     cmd->interval = poll_interval / 10;
@@ -157,6 +162,13 @@ int VaillantX6Command::get_expected_response_length() {
 
 void GetAnalogueValue2BytesCommand::process_response(uint8_t* response) {
     float value = ResponseDecoder::analogueValue2Bytes(response + 2);
+    sensor->publish_state(value);
+}
+
+// -------------------------------------------- 
+
+void GetAnalogueValue1ByteCommand::process_response(uint8_t* response) {
+    float value = ResponseDecoder::analogueValue1Byte(response[2]);
     sensor->publish_state(value);
 }
 

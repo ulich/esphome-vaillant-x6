@@ -14,9 +14,10 @@ class VaillantX6Command : public Command {
     virtual int get_expected_response_length();
 
     virtual int get_interval() {
-      return 1;
+      return interval;
     }
   
+    int interval = 1;
   private:
     int expected_response_length = 0;
 };
@@ -25,11 +26,13 @@ class GetAnalogueValue2BytesCommand : public VaillantX6Command {
   public:
     virtual void process_response(uint8_t* response) override;
 
-    virtual int get_interval() override {
-        return interval;
-    }
+    sensor::Sensor* sensor;
+};
 
-    int interval = 1;
+class GetAnalogueValue1ByteCommand : public VaillantX6Command {
+  public:
+    virtual void process_response(uint8_t* response) override;
+
     sensor::Sensor* sensor;
 };
 
@@ -37,14 +40,9 @@ class GetOnOffStatusCommand : public VaillantX6Command {
   public:
     virtual void process_response(uint8_t* response) override;
 
-    virtual int get_interval() override {
-        return interval;
-    }
-
     std::string object_id;
     std::string icon;
     std::string sensor_name;
-    int interval = 1;
     uint8_t on_value = 0x01;
     binary_sensor::BinarySensor* sensor;
 };
